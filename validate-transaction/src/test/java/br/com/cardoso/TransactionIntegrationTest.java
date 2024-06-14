@@ -62,7 +62,7 @@ public class TransactionIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(TransactionStatus.class)
-    void whenSentTransactionShouldReturnTransactionStatus(TransactionStatus expectedStatus) throws JsonProcessingException {
+    void shouldReturnTransactionStatusWhenTransactionIsSent(TransactionStatus expectedStatus) throws JsonProcessingException {
         //given
         BigDecimal value = new BigDecimal(1000);
         int validation = switch (expectedStatus) {

@@ -36,7 +36,7 @@ public class TransactionControllerTest {
 
     @ParameterizedTest
     @EnumSource(TransactionStatus.class)
-    void whenSentTransactionShouldReturnTransactionStatus(TransactionStatus expectedStatus) throws Exception {
+    void shouldReturnTransactionStatusWhenTransactionIsSent(TransactionStatus expectedStatus) throws Exception {
         //given
         BigDecimal value = new BigDecimal(1000);
         User user = new User("John Doe", "123456789", 0);

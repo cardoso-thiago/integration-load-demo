@@ -23,6 +23,6 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<TransactionStatus> validateTransaction(@RequestBody InitialTransaction initialTransaction) {
         CompletedTransaction completedTransaction = transactionClient.validateTransaction(initialTransaction);
-        return ResponseEntity.ok().body(completedTransaction.transactionStatus());
+        return ResponseEntity.ok(completedTransaction.transactionStatus());
     }
 }

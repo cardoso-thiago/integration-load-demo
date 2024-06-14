@@ -35,3 +35,12 @@ Na raiz do projeto, basta executar o comando `gradle pitest`. Ao fim do processo
 
 - Utilização do `JdkClientHttpRequestFactory`: Foi realizado um benchmark com testes de cargas para validar a `RequestFactory` com a melhor performance. Foram testados `JdkClientHttpRequestFactory`, `JettyClientHttpRequestFactory` e `SimpleClientHttpRequestFactory`. Houve basicamente um empate entre o `Jetty` e o `Jdk`, a opção final pelo `Jdk` foi principalmente devido ao fato de não precisar de uma dependência adicional.
 - Uso do `MockServer` para simulação da API de validação da transação: Apesar do WireMock ser mais conhecido, o uso do `RestClient` com `HTTP2` no momento é problemático. O `MockServer` parece não estar sendo atualizado, mas funcionou perfeitamente e fornece opções interessantes de configuração e template de resposta.
+
+## Erro na execução com cobertura pelo IntelliJ
+
+Ao executar os testes com cobertura pelo IntelliJ, os testes de integração podem falhar. Esse problema foi mapeado [aqui](https://youtrack.jetbrains.com/issue/IDEA-274803/Velocity-field-names-check-fails-with-new-coverage).
+No caso, é necessário realizar a seguinte configuração na IDE: 
+
+- Menu `Navigate`
+- Menu `Search Everywhere` e digite `Registry...`
+- Buscar pela chave `idea.coverage.new` e desabilitar. Os testes podem ficar mais lentos com essas opções desabilitadas. 
