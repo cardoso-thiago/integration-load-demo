@@ -70,6 +70,7 @@ public class TransactionIntegrationTest {
             case AUTHORIZED -> 1;
             default -> -1;
         };
+
         User user = new User("John Doe", "123456789", validation);
         InitialTransaction initialTransaction = new InitialTransaction(value, user);
         CompletedTransaction completedTransaction = new CompletedTransaction(UUID.randomUUID().toString(), value, user, expectedStatus);
