@@ -31,7 +31,8 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter'
+    implementation 'am.ik.spring:retryable-client-http-request-interceptor:0.5.1'
 
     //Para usar JettyClientHttpRequestFactory
     //implementation("org.eclipse.jetty:jetty-client:12.0.10")

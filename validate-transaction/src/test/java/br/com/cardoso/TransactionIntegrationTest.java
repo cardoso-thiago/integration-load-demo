@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.junit.jupiter.MockServerExtension;
 import org.mockserver.junit.jupiter.MockServerSettings;
+import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +46,10 @@ public class TransactionIntegrationTest {
     static void setup(MockServerClient mockServerClient) {
         String baseUrl = "http://localhost:" + mockServerClient.getPort();
         System.setProperty("transaction.base.url", baseUrl);
+
+        mockServerClient.when(request().withMethod("POST").withPath("/validate/transaction/v1"), Times.exactly(2))
+                .respond(HttpTemplate.template(HttpTemplate.TemplateType.VELOCITY,
+                        "{'statusCode': 425,'body': 'Falha temporária, tente novamente em alguns instantes.'}"));
 
         mockServerClient.when(request().withMethod("POST").withPath("/validate/transaction/v1"))
                 .respond(HttpTemplate.template(HttpTemplate.TemplateType.VELOCITY,
