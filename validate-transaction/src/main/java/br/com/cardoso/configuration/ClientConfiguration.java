@@ -6,6 +6,7 @@ import org.springframework.boot.web.client.RestClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -14,6 +15,7 @@ public class ClientConfiguration {
 
     @Bean
     TransactionClient transactionClient(RestClient.Builder restClientBuilder, Environment environment) {
+        restClientBuilder.requestFactory(new BufferingClientHttpRequestFactory(new JdkClientHttpRequestFactory()));
         return new TransactionClientImpl(restClientBuilder, environment);
     }
 
@@ -28,6 +30,8 @@ public class ClientConfiguration {
         //JdkClientHttpRequestFactory
         //JettyClientHttpRequestFactory
         //SimpleClientHttpRequestFactory
-        return (restClientBuilder) -> restClientBuilder.requestFactory(new JdkClientHttpRequestFactory());
+        //Adicionando o BufferingClientHttpRequestFactory. Pode causar um aumento no consumo de memória e latência,
+        //principalmente em cenários com respostas grandes
+        return (restClientBuilder) -> restClientBuilder.requestFactory(new BufferingClientHttpRequestFactory(new JdkClientHttpRequestFactory()));
     }
 }

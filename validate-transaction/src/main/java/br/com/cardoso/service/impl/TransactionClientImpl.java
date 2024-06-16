@@ -3,6 +3,7 @@ package br.com.cardoso.service.impl;
 import am.ik.spring.http.client.RetryableClientHttpRequestInterceptor;
 import br.com.cardoso.dto.InitialTransaction;
 import br.com.cardoso.exception.TransactionErrorException;
+import br.com.cardoso.interceptor.TransactionRequestInterceptor;
 import br.com.cardoso.model.CompletedTransaction;
 import br.com.cardoso.model.Transaction;
 import br.com.cardoso.service.TransactionClient;
@@ -22,8 +23,13 @@ public class TransactionClientImpl implements TransactionClient {
     public TransactionClientImpl(RestClient.Builder restClientBuilder, Environment environment) {
         String baseUrl = Objects.requireNonNull(environment.getProperty("transaction.base.url"));
         this.restClient = restClientBuilder.baseUrl(baseUrl)
-                //Adicionando mecanismo de retry, para que seja feito duas novas tentativas e apenas no caso de statusCode 425
-                .requestInterceptor(new RetryableClientHttpRequestInterceptor(new FixedBackOff(100, 2), Set.of(425)))
+                .requestInterceptors(interceptors -> {
+                    //Adicionando interceptor para capturar os dados da request e response
+                    interceptors.add(new TransactionRequestInterceptor());
+                    //Adicionando mecanismo de retry, para que seja feito duas novas tentativas e apenas no caso de statusCode 425
+                    //Identificado que deve ser sempre o último, caso contrário, executa novamente em caso de falha sem considerar os demais interceptors.
+                    interceptors.add(new RetryableClientHttpRequestInterceptor(new FixedBackOff(100, 2), Set.of(425)));
+                })
                 .build();
     }
 
