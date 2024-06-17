@@ -41,6 +41,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.mock-server:mockserver-junit-jupiter:${mockServerVersion}"
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.awaitility:awaitility:4.2.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

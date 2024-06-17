@@ -1,11 +1,13 @@
 package br.com.cardoso;
 
 import br.com.cardoso.dto.InitialTransaction;
-import br.com.cardoso.model.CompletedTransaction;
+import br.com.cardoso.model.TransactionRequestResponseData;
 import br.com.cardoso.model.TransactionStatus;
 import br.com.cardoso.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,16 +25,22 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockserver.model.HttpRequest.request;
 
 @ExtendWith(MockServerExtension.class)
 @MockServerSettings(ports = {0})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EmbeddedKafka(partitions = 1, topics = {"event-hub"})
 public class TransactionIntegrationTest {
 
     @Autowired
@@ -41,6 +49,8 @@ public class TransactionIntegrationTest {
     private ObjectMapper objectMapper;
     @LocalServerPort
     private int port;
+    
+    private static final List<TransactionRequestResponseData> transactionRequestResponseDataList = new ArrayList<>();
 
     @BeforeAll
     static void setup(MockServerClient mockServerClient) {
@@ -57,7 +67,23 @@ public class TransactionIntegrationTest {
                                 "{'transactionId': '$!uuid', 'value': $jsonBody.value, " +
                                 "'user': {'fullname': '$jsonBody.user.fullName', 'document': '$jsonBody.user.document', 'validation': $jsonBody.user.validation}, " +
                                 "'transactionStatus': #if($jsonBody.user.validation == -1) 'ERROR' #elseif($jsonBody.user.validation == 0) 'DENIED' #else 'AUTHORIZED' #end}}"));
+    }
 
+    @AfterAll
+    static void shouldValidateAllTransactionStatusWhenListReceivedKafkaMessages() {
+        //given
+        await().atMost(10, SECONDS).until(() -> transactionRequestResponseDataList.size() == 4);
+        List<String> responseList = transactionRequestResponseDataList.stream().map(TransactionRequestResponseData::responseBody).toList();
+
+        //then
+        assertTrue(responseList.stream().anyMatch(response -> response.contains(TransactionStatus.ERROR.name())),
+                "Esperado que ao menos uma resposta tenha o status de 'ERROR'");
+        assertTrue(responseList.stream().anyMatch(response -> response.contains(TransactionStatus.AUTHORIZED.name())),
+                "Esperado que ao menos uma resposta tenha o status de 'AUTHORIZED'");
+        assertTrue(responseList.stream().anyMatch(response -> response.contains(TransactionStatus.DENIED.name())),
+                "Esperado que ao menos uma resposta tenha o status de 'DENIED'");
+        assertFalse(responseList.stream().anyMatch(response -> response.contains(TransactionStatus.CREATED.name())),
+                "Nenhuma resposta deve ter o status 'CREATED'");
     }
 
     @ParameterizedTest
@@ -73,7 +99,6 @@ public class TransactionIntegrationTest {
 
         User user = new User("John Doe", "123456789", validation);
         InitialTransaction initialTransaction = new InitialTransaction(value, user);
-        CompletedTransaction completedTransaction = new CompletedTransaction(UUID.randomUUID().toString(), value, user, expectedStatus);
 
         String requestBody = objectMapper.writeValueAsString(initialTransaction);
         HttpHeaders headers = new HttpHeaders();
@@ -89,5 +114,10 @@ public class TransactionIntegrationTest {
         } else {
             assertEquals(expectedStatus, response.getBody());
         }
+    }
+
+    @KafkaListener(groupId = "transactionGroup", topics = "event-hub")
+    public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
+        transactionRequestResponseDataList.add(objectMapper.readValue(record.value(), TransactionRequestResponseData.class));
     }
 }
