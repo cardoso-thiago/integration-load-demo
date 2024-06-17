@@ -1,6 +1,7 @@
 package br.com.cardoso.interceptor;
 
 import br.com.cardoso.model.TransactionRequestResponseData;
+import br.com.cardoso.service.KafkaMessageService;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -11,6 +12,12 @@ import java.io.IOException;
 
 public class TransactionRequestInterceptor implements ClientHttpRequestInterceptor {
 
+    private final KafkaMessageService kafkaMessageService;
+
+    public TransactionRequestInterceptor(KafkaMessageService kafkaMessageService) {
+        this.kafkaMessageService = kafkaMessageService;
+    }
+
     @Override
     @NonNull
     public ClientHttpResponse intercept(@NonNull HttpRequest request, @NonNull byte[] body, @NonNull ClientHttpRequestExecution execution) throws IOException {
@@ -20,11 +27,11 @@ public class TransactionRequestInterceptor implements ClientHttpRequestIntercept
                     request.getMethod().toString(),
                     request.getHeaders(),
                     new String(body),
-                    response.getStatusCode(),
+                    response.getStatusCode().value(),
                     response.getHeaders(),
                     new String(response.getBody().readAllBytes())
             );
-            //TODO enviar transactionRequestResponseData como evento
+            kafkaMessageService.sendMessage(transactionRequestResponseData);
             return response;
         }
     }

@@ -50,11 +50,11 @@ public class TransactionClientTest {
 
     @BeforeEach
     void setup() {
-        //Alteração necessária no teste ainda em linha com a issue https://github.com/spring-projects/spring-boot/issues/38832,
-        //foi necessário passar a utilizar o MockServerRestClientCustomizer para chamar o setBufferContent para refletir a mudança
-        //de comportamento inserida com o BufferingClientHttpRequestFactory, necessário para o novo interceptor que captura as informações
-        //de request e response, permitindo a leitura do response mais de uma vez. Como não é possível configurar o RestClient.Builder
-        //para os testes, foi necessário simular o comportamento no builder em tempo de teste. Alteração realizada com base na doc:
+        // Alteração necessária no teste ainda em linha com a issue https://github.com/spring-projects/spring-boot/issues/38832,
+        //foi necessário passar a utilizar o MockServerRestClientCustomizer para chamar o setBufferContent para simular o comportamento
+        //do BufferingClientHttpRequestFactory, necessário para o novo interceptor que captura as informações de request e response,
+        //permitindo a leitura do response mais de uma vez. Como não é possível configurar o RestClient.Builder devido a issue, foi
+        //necessário configurar o builder em tempo de teste que usa o MockMvc para simular a requisição. Alteração realizada com base na doc:
         //https://docs.spring.io/spring-boot/api/java/org/springframework/boot/test/web/client/MockServerRestClientCustomizer.html
         mockServerRestClientCustomizer.setBufferContent(true);
         mockServerRestClientCustomizer.customize(restClientBuilder);

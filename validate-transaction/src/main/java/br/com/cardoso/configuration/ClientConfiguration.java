@@ -1,5 +1,6 @@
 package br.com.cardoso.configuration;
 
+import br.com.cardoso.service.KafkaMessageService;
 import br.com.cardoso.service.TransactionClient;
 import br.com.cardoso.service.impl.TransactionClientImpl;
 import org.springframework.boot.web.client.RestClientCustomizer;
@@ -14,9 +15,10 @@ import org.springframework.web.client.RestClient;
 public class ClientConfiguration {
 
     @Bean
-    TransactionClient transactionClient(RestClient.Builder restClientBuilder, Environment environment) {
+    TransactionClient transactionClient(RestClient.Builder restClientBuilder, Environment environment,
+                                        KafkaMessageService kafkaMessageService) {
         restClientBuilder.requestFactory(new BufferingClientHttpRequestFactory(new JdkClientHttpRequestFactory()));
-        return new TransactionClientImpl(restClientBuilder, environment);
+        return new TransactionClientImpl(restClientBuilder, environment, kafkaMessageService);
     }
 
     /**
