@@ -5,6 +5,7 @@ import br.com.cardoso.exception.TransactionErrorException;
 import br.com.cardoso.model.CompletedTransaction;
 import br.com.cardoso.model.TransactionStatus;
 import br.com.cardoso.model.User;
+import br.com.cardoso.service.KafkaMessageService;
 import br.com.cardoso.service.TransactionClient;
 import br.com.cardoso.service.impl.TransactionClientImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.MockServerRestClientCustomizer;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatusCode;
@@ -45,6 +47,8 @@ public class TransactionClientTest {
     ObjectMapper objectMapper;
     @Autowired
     Environment environment;
+    @MockBean
+    KafkaMessageService kafkaMessageService;
     TransactionClient transactionClient;
     MockRestServiceServer mockRestServiceServer;
 
@@ -58,7 +62,7 @@ public class TransactionClientTest {
         //https://docs.spring.io/spring-boot/api/java/org/springframework/boot/test/web/client/MockServerRestClientCustomizer.html
         mockServerRestClientCustomizer.setBufferContent(true);
         mockServerRestClientCustomizer.customize(restClientBuilder);
-        transactionClient = new TransactionClientImpl(restClientBuilder, environment);
+        transactionClient = new TransactionClientImpl(restClientBuilder, environment, kafkaMessageService);
         mockRestServiceServer = mockServerRestClientCustomizer.getServer(restClientBuilder);
     }
 
