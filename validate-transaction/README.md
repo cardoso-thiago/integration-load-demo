@@ -19,7 +19,7 @@ Subir a aplicação `validate-transaction`. Com a aplicação de pé, pode ser r
 ```shell
 curl -X POST http://localhost:8080/transaction/v1 \
 -H "Content-Type: application/json" \
--d '{ "value": 100.0, "user": { "fullName": "John Doe", "document": "123456789", "validation": 2 }}' 
+-d '{ "value": 100.0, "user": { "name": "John Doe", "document": "123456789", "validation": 2 }}' 
 ```
 
 O campo `validation` é o que determina o resultado de acordo com o mock no `mockserver`. Se o valor do campo for `-1`, o resultado da transação será `ERROR`, se for `0`, o resultado será `DENIED`. Outros valores darão o retorno `AUTHORIZED`.

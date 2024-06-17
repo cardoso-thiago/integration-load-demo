@@ -12,7 +12,3 @@ Subir a aplicação `transaction-recorder`. Com a aplicação de pé, chamadas p
 ## Execução dos testes de mutação
 
 EM CONSTRUÇÃO
-
-### Motivação para algumas escolhas
-
-- O parse do tipo de objeto não foi transparente. Para um melhor tratamento do payload, nesse ponto o valor é enviado como _Json_ mas recebido como _String_. O parse do objeto é feito localmente, com auxílio do `ObjectMapper`.

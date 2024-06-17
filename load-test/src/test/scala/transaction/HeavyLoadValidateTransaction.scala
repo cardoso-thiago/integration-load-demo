@@ -22,7 +22,7 @@ class HeavyLoadValidateTransaction extends Simulation {
             """{
               "value": 100.0,
               "user": {
-                "fullName": "John Doe",
+                "name": "John Doe",
                 "document": "123456789",
                 "validation": 1
               },

@@ -6,7 +6,7 @@
       "body": {
         "value": "${json-unit.any-number}",
         "user": {
-          "fullName": "${json-unit.any-string}",
+          "name": "${json-unit.any-string}",
           "document": "${json-unit.any-string}",
           "validation": "${json-unit.any-number}"
         },
@@ -29,7 +29,7 @@
       "body": {
         "value": "${json-unit.any-number}",
         "user": {
-          "fullName": "${json-unit.any-string}",
+          "name": "${json-unit.any-string}",
           "document": "${json-unit.any-string}",
           "validation": "${json-unit.any-number}"
         },
@@ -38,7 +38,7 @@
     },
     "httpResponseTemplate": {
       "templateType": "VELOCITY",
-      "template": "#set($jsonBody = $json.parse($!request.body)){'statusCode': 200,'body': {'transactionId': '$!uuid', 'value': $jsonBody.value, 'user': {'fullname': '$jsonBody.user.fullName', 'document': '$jsonBody.user.document', 'validation': $jsonBody.user.validation}, 'transactionStatus': #if($jsonBody.user.validation == -1) 'ERROR' #elseif($jsonBody.user.validation == 0) 'DENIED' #else 'AUTHORIZED' #end}}"
+      "template": "#set($jsonBody = $json.parse($!request.body)){'statusCode': 200,'body': {'transactionId': '$!uuid', 'value': $jsonBody.value, 'user': {'name': '$jsonBody.user.name', 'document': '$jsonBody.user.document', 'validation': $jsonBody.user.validation}, 'transactionStatus': #if($jsonBody.user.validation == -1) 'ERROR' #elseif($jsonBody.user.validation == 0) 'DENIED' #else 'AUTHORIZED' #end}}"
     }
   }
 ]

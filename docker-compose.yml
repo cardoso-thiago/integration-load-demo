@@ -49,6 +49,19 @@ services:
     networks:
       - demo-load
 
+  mysql:
+    image: mysql:8.4.0
+    command: --mysql-native-password=ON
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pw
+      MYSQL_DATABASE: db
+    ports:
+      - '3306:3306'
+    networks:
+      - demo-load
+
 networks:
   demo-load:
     external: true

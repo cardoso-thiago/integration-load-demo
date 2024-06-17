@@ -65,7 +65,7 @@ public class TransactionIntegrationTest {
                 .respond(HttpTemplate.template(HttpTemplate.TemplateType.VELOCITY,
                         "#set($jsonBody = $json.parse($!request.body)){'statusCode': 200,'body': " +
                                 "{'transactionId': '$!uuid', 'value': $jsonBody.value, " +
-                                "'user': {'fullname': '$jsonBody.user.fullName', 'document': '$jsonBody.user.document', 'validation': $jsonBody.user.validation}, " +
+                                "'user': {'name': '$jsonBody.user.name', 'document': '$jsonBody.user.document', 'validation': $jsonBody.user.validation}, " +
                                 "'transactionStatus': #if($jsonBody.user.validation == -1) 'ERROR' #elseif($jsonBody.user.validation == 0) 'DENIED' #else 'AUTHORIZED' #end}}"));
     }
 
