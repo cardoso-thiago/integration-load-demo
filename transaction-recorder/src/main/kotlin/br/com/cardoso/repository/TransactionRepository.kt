@@ -2,7 +2,7 @@ package br.com.cardoso.repository
 
 import br.com.cardoso.entity.TransactionEntity
 import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
+import org.springframework.data.repository.history.RevisionRepository
 
-@Repository
-interface TransactionRepository : CrudRepository<TransactionEntity, Long>
+interface TransactionRepository : CrudRepository<TransactionEntity, Long>,
+    RevisionRepository<TransactionEntity, Long, Long>

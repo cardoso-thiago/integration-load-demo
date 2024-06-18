@@ -37,6 +37,7 @@ Na raiz do projeto, basta executar o comando `gradle pitest`. Ao fim do processo
 - Utilização do `JdkClientHttpRequestFactory`: Foi realizado um benchmark com testes de cargas para validar a `RequestFactory` com a melhor performance. Foram testados `JdkClientHttpRequestFactory`, `JettyClientHttpRequestFactory` e `SimpleClientHttpRequestFactory`. Houve basicamente um empate entre o `Jetty` e o `Jdk`, a opção final pelo `Jdk` foi principalmente devido ao fato de não precisar de uma dependência adicional.
 - Uso do `MockServer` para simulação da API de validação da transação: Apesar do WireMock ser mais conhecido, o uso do `RestClient` com `HTTP2` no momento é problemático. O `MockServer` parece não estar sendo atualizado, mas funcionou perfeitamente e fornece opções interessantes de configuração e template de resposta.
 - Uso do mecanismo de Async do Spring: Implementação muito simples, trouxe um ganho considerável na resposta, identificado inicialmente por logs com o tempo de execução sem a implementação e com a implementação. Foi possível identificar o fluxo sendo executado em uma nova thread com a informação em `Thread.currentThread().getName()`. É possível que em um cenário de Virtual Threads e alta carga, o benefício possa ser ainda maior.
+- O payload de response faz pouco sentido em um cenário real. Foi implementado dessa forma mais como forma de aprendizado dos mecanismos de template do `MockServer`.
 
 ## Erro na execução com cobertura pelo IntelliJ
 
