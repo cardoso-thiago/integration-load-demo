@@ -42,12 +42,10 @@ public class TransactionControllerTest {
         User user = new User("John Doe", "123456789", 0);
         InitialTransaction initialTransaction = new InitialTransaction(value, user);
         CompletedTransaction completedTransaction = new CompletedTransaction(UUID.randomUUID().toString(), value, user, expectedStatus);
-
-        //when
         when(transactionClient.validateTransaction(initialTransaction)).thenReturn(completedTransaction);
 
-        //then
-        this.mockMvc.perform(post("/transaction/v1")
+        //when and then
+        this.mockMvc.perform(post("/v1/validate/transactions")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(initialTransaction)))
                 .andDo(print())

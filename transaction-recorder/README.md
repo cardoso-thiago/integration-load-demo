@@ -16,7 +16,7 @@ Subir a aplicação `transaction-recorder`. Com a aplicação de pé, chamadas p
 
 ## Execução dos testes de mutação
 
-EM CONSTRUÇÃO
+Na raiz do projeto, basta executar o comando `gradle pitest`. Ao fim do processo, o relatório pode ser visualizado em `build/reports/pitest`.
 
 ### Motivação para algumas escolhas
 

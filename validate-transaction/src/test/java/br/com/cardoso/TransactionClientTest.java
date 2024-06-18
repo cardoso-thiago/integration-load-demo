@@ -75,13 +75,13 @@ public class TransactionClientTest {
         User user = new User("John Doe", "123456789", 0);
         InitialTransaction initialTransaction = new InitialTransaction(value, user);
         CompletedTransaction completedTransaction = new CompletedTransaction(UUID.randomUUID().toString(), value, user, expectedStatus);
-
-        //when
         mockRestServiceServer.expect(requestTo(baseUrl + "/validate/transaction/v1"))
                 .andRespond(withSuccess(objectMapper.writeValueAsString(completedTransaction), MediaType.APPLICATION_JSON));
 
-        //then
+        //when
         CompletedTransaction completedTransactionValidate = transactionClient.validateTransaction(initialTransaction);
+
+        //then
         assertEquals(completedTransaction, completedTransactionValidate);
     }
 
@@ -96,13 +96,11 @@ public class TransactionClientTest {
         int statusCode = 425;
         String expectedErrorMessage = MessageFormat.format("Erro ao realizar a transação. Mensagem: {0} => Código de retorno: {1}",
                 apiErrorMessage, statusCode);
-
-        //when
         mockRestServiceServer.expect(times(3), requestTo(baseUrl + "/validate/transaction/v1"))
                 .andRespond(withStatus(HttpStatusCode.valueOf(statusCode))
                         .body(apiErrorMessage));
 
-        //then
+        //when and then
         TransactionErrorException transactionErrorException =
                 assertThrows(TransactionErrorException.class, () -> transactionClient.validateTransaction(initialTransaction));
         assertEquals(expectedErrorMessage, transactionErrorException.getMessage());

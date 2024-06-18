@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/transaction/v1")
+@RequestMapping("/v1/validate/transactions")
 public class TransactionController {
 
     private final TransactionClient transactionClient;

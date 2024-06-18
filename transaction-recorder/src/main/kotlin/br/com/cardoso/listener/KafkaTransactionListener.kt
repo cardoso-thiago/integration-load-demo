@@ -28,7 +28,7 @@ class KafkaTransactionListener(
             responseStatus = transactionRequestResponseData.responseStatus,
             transactionId = transactionResponse.transactionId,
             transactionStatus = transactionResponse.transactionStatus,
-            value = transactionRequest.value,
+            transactionValue = transactionRequest.value,
             userDocument = transactionRequest.user.document,
             userName = transactionRequest.user.name,
         )

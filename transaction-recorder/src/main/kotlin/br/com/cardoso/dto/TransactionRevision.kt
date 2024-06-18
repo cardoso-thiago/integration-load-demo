@@ -3,7 +3,7 @@ package br.com.cardoso.dto
 import org.springframework.data.history.RevisionMetadata.RevisionType
 import java.math.BigDecimal
 
-data class AuditTransaction(
+data class TransactionRevision(
     val id: Long,
     val responseStatus: Int?,
     val transactionId: String?,

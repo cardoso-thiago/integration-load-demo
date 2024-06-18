@@ -17,7 +17,7 @@
 Subir a aplicação `validate-transaction`. Com a aplicação de pé, pode ser realizado o seguinte curl para validação de uma nova transação:
 
 ```shell
-curl -X POST http://localhost:8080/transaction/v1 \
+curl -X POST http://localhost:8080/v1/validate/transactions \
 -H "Content-Type: application/json" \
 -d '{ "value": 100.0, "user": { "name": "John Doe", "document": "123456789", "validation": 2 }}' 
 ```

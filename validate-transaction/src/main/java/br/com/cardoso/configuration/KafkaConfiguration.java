@@ -15,6 +15,6 @@ public class KafkaConfiguration {
     @Bean
     public NewTopic topic(Environment environment) {
         return TopicBuilder.name(Objects.requireNonNull(environment.getProperty("kafka.topic")))
-                .partitions(10).replicas(1).build();
+                .partitions(1).replicas(1).build();
     }
 }

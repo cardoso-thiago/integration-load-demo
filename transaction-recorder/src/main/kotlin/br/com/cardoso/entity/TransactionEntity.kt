@@ -11,11 +11,17 @@ data class TransactionEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+    @Column(name = "response_status")
     val responseStatus: Int?,
+    @Column(name = "transaction_id")
     val transactionId: String?,
-    val value: BigDecimal?,
+    @Column(name = "transaction_value")
+    val transactionValue: BigDecimal?,
+    @Column(name = "user_name")
     val userName: String?,
+    @Column(name = "user_document")
     var userDocument: String?,
+    @Column(name = "transaction_status")
     val transactionStatus: String?,
     @Version
     val version: Long = 0

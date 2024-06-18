@@ -105,9 +105,10 @@ public class TransactionIntegrationTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-        //then
-        ResponseEntity<TransactionStatus> response = testRestTemplate.postForEntity("http://localhost:" + port + "/transaction/v1", entity, TransactionStatus.class);
+        //when
+        ResponseEntity<TransactionStatus> response = testRestTemplate.postForEntity("http://localhost:" + port + "/v1/validate/transactions", entity, TransactionStatus.class);
 
+        //then
         //No cenário integrado, a transação nunca deve retornar com o status CREATED
         if (expectedStatus.equals(TransactionStatus.CREATED)) {
             assertEquals(TransactionStatus.ERROR, response.getBody());

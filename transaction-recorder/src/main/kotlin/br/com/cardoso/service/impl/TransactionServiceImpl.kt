@@ -1,7 +1,7 @@
 package br.com.cardoso.service.impl
 
-import br.com.cardoso.dto.AuditTransaction
 import br.com.cardoso.dto.Transaction
+import br.com.cardoso.dto.TransactionRevision
 import br.com.cardoso.entity.TransactionEntity
 import br.com.cardoso.repository.TransactionRepository
 import br.com.cardoso.service.TransactionService
@@ -15,8 +15,8 @@ class TransactionServiceImpl(
     private val transactionTemplate: TransactionTemplate
 ) : TransactionService {
 
-    override fun saveTransaction(transactionEntity: TransactionEntity) {
-        transactionTemplate.executeWithoutResult { transactionRepository.save(transactionEntity) }
+    override fun saveTransaction(transactionEntity: TransactionEntity): TransactionEntity? {
+        return transactionTemplate.execute { transactionRepository.save(transactionEntity) }
     }
 
     override fun findAllTransactions(): List<Transaction> {
@@ -26,7 +26,7 @@ class TransactionServiceImpl(
                 id = entity.id,
                 responseStatus = entity.responseStatus,
                 transactionId = entity.transactionId,
-                value = entity.value,
+                value = entity.transactionValue,
                 userName = entity.userName,
                 userDocument = entity.userDocument,
                 transactionStatus = entity.transactionStatus
@@ -34,14 +34,14 @@ class TransactionServiceImpl(
         }
     }
 
-    override fun findRevisionsById(id: Long): List<AuditTransaction> {
+    override fun findRevisionsById(id: Long): List<TransactionRevision> {
         val revisions = transactionRepository.findRevisions(id).toList()
         return revisions.map { revision: Revision<Long, TransactionEntity> ->
-            AuditTransaction(
+            TransactionRevision(
                 id = revision.entity.id,
                 responseStatus = revision.entity.responseStatus,
                 transactionId = revision.entity.transactionId,
-                value = revision.entity.value,
+                value = revision.entity.transactionValue,
                 userName = revision.entity.userName,
                 userDocument = revision.entity.userDocument,
                 transactionStatus = revision.entity.transactionStatus,
