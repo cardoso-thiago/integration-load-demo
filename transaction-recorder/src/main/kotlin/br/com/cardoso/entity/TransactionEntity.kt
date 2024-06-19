@@ -29,13 +29,12 @@ data class TransactionEntity(
     @PrePersist
     @PreUpdate
     fun maskFields() {
-        userDocument = maskDocument(userDocument)
+        if (userDocument != null) {
+            userDocument = maskDocument(userDocument!!)
+        }
     }
 
-    private fun maskDocument(document: String?): String? {
-        if (document != null) {
-            return document.take(3) + "X".repeat(document.length - 3)
-        }
-        return null
+    private fun maskDocument(document: String): String {
+        return document.take(3) + "X".repeat(document.length - 3)
     }
 }

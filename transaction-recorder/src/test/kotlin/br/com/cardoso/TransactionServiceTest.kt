@@ -53,10 +53,17 @@ class TransactionServiceTest {
         //then
         assertEquals(2, revisions.size)
         assertEquals("123XXXXXX", revisions[0].userDocument)
+        assertEquals(0, BigDecimal(100.0).compareTo(revisions[0].value))
         assertEquals(transactionEntity.userName, revisions[0].userName)
         assertEquals(RevisionMetadata.RevisionType.INSERT, revisions[0].revisionType)
+        assertEquals(savedTransaction.id, revisions[1].id)
+        assertNull(revisions[1].responseStatus)
+        assertNull(revisions[1].transactionId)
+        assertNull(revisions[1].value)
         assertNull(revisions[1].userDocument)
+        assertNull(revisions[1].transactionStatus)
         assertNull(revisions[1].userName)
+        assertEquals(0, revisions[1].version)
         assertEquals(RevisionMetadata.RevisionType.DELETE, revisions[1].revisionType)
     }
 

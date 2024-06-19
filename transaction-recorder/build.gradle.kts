@@ -59,4 +59,5 @@ pitest {
     outputFormats.set(listOf("HTML"))
     timestampedReports.set(false)
     junit5PluginVersion.set("1.2.1")
+    avoidCallsTo.set(listOf("kotlin.jvm.internal", "kotlinx.coroutines"))
 }

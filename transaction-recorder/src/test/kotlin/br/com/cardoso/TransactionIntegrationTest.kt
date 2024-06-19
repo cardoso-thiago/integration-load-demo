@@ -49,7 +49,8 @@ class TransactionIntegrationTest {
     @Test
     fun `should process transaction and validate audit`() {
         //given
-        val (user, transactionResponse, transactionRequestResponseData) = generateUserResponseTransactionRequestData()
+        val user = User(name = "John Doe", document = "123456789", validation = 1)
+        val (transactionRequest, transactionResponse, transactionRequestResponseData) = generateUserResponseTransactionRequestData(user)
         sendKafkaMessage(transactionRequestResponseData)
 
         //when
@@ -69,6 +70,11 @@ class TransactionIntegrationTest {
         assertEquals(transactionResponse.transactionId, allTransactionsResponse.body!![0].transactionId)
         assertEquals(transactionResponse.transactionStatus, allTransactionsResponse.body!![0].transactionStatus)
         assertEquals(user.name, allTransactionsResponse.body!![0].userName)
+        assertEquals(user.document, allTransactionsResponse.body!![0].userDocument)
+        assertEquals(1, user.validation)
+        assertEquals("https://request.uri", transactionRequestResponseData.requestUri)
+        assertEquals("POST", transactionRequestResponseData.requestMethod)
+        assertEquals(200, transactionRequestResponseData.responseStatus)
 
         //given
         val savedTransactionId = allTransactionsResponse.body!![0].id
@@ -108,6 +114,7 @@ class TransactionIntegrationTest {
         assertEquals("123XXXXXX", allRevisionsResponseAfterDelete.body!![0].userDocument)
         assertEquals(transactionResponse.transactionId, allRevisionsResponseAfterDelete.body!![0].transactionId)
         assertEquals(transactionResponse.transactionStatus, allRevisionsResponseAfterDelete.body!![0].transactionStatus)
+        assertNotEquals(transactionRequest.transactionStatus, allRevisionsResponseAfterDelete.body!![0].transactionStatus)
         assertEquals(user.name, allRevisionsResponseAfterDelete.body!![0].userName)
         assertEquals(0, allRevisionsResponseAfterDelete.body!![0].version)
         assertEquals(RevisionType.INSERT, allRevisionsResponseAfterDelete.body!![0].revisionType)
@@ -128,8 +135,7 @@ class TransactionIntegrationTest {
         kafkaTransactionListener.listen(consumerRecordTransaction)
     }
 
-    private fun generateUserResponseTransactionRequestData(): Triple<User, TransactionResponse, TransactionRequestResponseData> {
-        val user = User(name = "John Doe", document = "123456789", validation = 1)
+    private fun generateUserResponseTransactionRequestData(user: User): Triple<TransactionRequest, TransactionResponse, TransactionRequestResponseData> {
         val transactionRequest = TransactionRequest(
             transactionStatus = "CREATED",
             value = BigDecimal(1000.00),
@@ -142,10 +148,12 @@ class TransactionIntegrationTest {
             user = user
         )
         val transactionRequestResponseData = TransactionRequestResponseData(
+            requestUri = "https://request.uri",
+            requestMethod = "POST",
             requestBody = objectMapper.writeValueAsString(transactionRequest),
             responseBody = objectMapper.writeValueAsString(transactionResponse),
             responseStatus = 200
         )
-        return Triple(user, transactionResponse, transactionRequestResponseData)
+        return Triple(transactionRequest, transactionResponse, transactionRequestResponseData)
     }
 }
